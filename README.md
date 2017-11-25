@@ -20,11 +20,4 @@ The commands for building/compiling and running your project are saved in `proje
 * `Bar: Build and run project`: Build and run project.
 * `Bar: Reset` Reset the config file.
 
-### 0.0.2
-Updated README.md  
-Added `Bar: Reset` command.
-
-### 0.0.1
-Initial release of Bar!
-
 **Enjoy!**
