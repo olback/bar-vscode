@@ -20,4 +20,7 @@ The commands for building/compiling and running your project are saved in `proje
 * `Bar: Build and run project`: Build and run project.
 * `Bar: Reset` Reset the config file.
 
+## Bugs
+Please report any bugs or issues on [GitHub](https://github.com/olback/bar-vscode)
+
 **Enjoy!**
