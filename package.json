@@ -15,7 +15,8 @@
         "onCommand:extension.init",
         "onCommand:extension.build",
         "onCommand:extension.run",
-        "onCommand:extension.bar"
+        "onCommand:extension.bar",
+        "onCommand:extension.reset"
     ],
     "main": "./extension",
     "contributes": {
@@ -34,6 +35,10 @@
         {
             "command": "extension.bar",
             "title": "Bar: Build and run project"
+        },
+        {
+            "command": "extension.reset",
+            "title": "Bar: Reset config"
         }]
     },
     "scripts": {

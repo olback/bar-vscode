@@ -65,8 +65,18 @@ function readConfig() {
     }
 }
 
+function resetConfig() {
+    if(fs.existsSync(configPath)) {
+        fs.unlinkSync(configPath, (err) => {
+            if(err) return console.log(err);
+            console.log("Removed " + configPath);
+        });
+        vscode.window.showWarningMessage('Bar config reset.');
+        init();
+    }
+}
+
 function init() {
-    console.log('bar is active!');
     readConfig();
 }
 
@@ -99,6 +109,8 @@ function run() {
 // this method is called when your extension is executed
 function activate(context) {
 
+    console.log('bar is active!');
+
     // Init
     let disposable = vscode.commands.registerCommand('extension.init', () => {
         init();
@@ -122,6 +134,12 @@ function activate(context) {
         //vscode.window.showInformationMessage('Started and run whatever');
         runAfterBuild = true;
         build();
+    });
+    context.subscriptions.push(disposable);
+
+    // Reset config
+    disposable = vscode.commands.registerCommand('extension.reset', () => {
+        resetConfig();
     });
     context.subscriptions.push(disposable);
 
