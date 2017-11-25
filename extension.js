@@ -3,44 +3,80 @@
  *      BAR
  */
 
+// Imports
 const vscode = require('vscode');
 const exec = require('child_process').exec;
+const fs = require('fs');
 
-const commands = {
-    build: "make build",
-    run: "./rdg"
-}
+let config;
 let runAfterBuild = false;
-const statusBarItem_sep_1 = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-const statusBarItem_build = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-const statusBarItem_run = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-const statusBarItem_bar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-const statusBarItem_sep_2 = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+let new_build_command;
+let new_run_command;
+const statusBarItems = [];
+const configPath = vscode.workspace.rootPath + "/.vscode/bar.conf.json";
+
+function fuck(str) {
+    return str;
+}
+
+function addStatusBarItem(str, cmd) {
+    statusBarItems.push(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left));
+    statusBarItems[statusBarItems.length-1].text = str;
+    if(cmd) { statusBarItems[statusBarItems.length-1].command = cmd; }
+    statusBarItems[statusBarItems.length-1].show();
+}
+
+function addStatusBar() {
+    addStatusBarItem("|");
+    addStatusBarItem("Build", "extension.build");
+    addStatusBarItem("► Run", "extension.run");
+    addStatusBarItem("Build and run", "extension.bar");
+    addStatusBarItem("|");
+}
+
+function newConfigBuild() {
+    vscode.window.showInputBox({prompt: 'Build command. Example: "make build"', ignoreFocusOut: true})
+        .then(val => { new_build_command = val; newConfigRun(); });
+}
+
+function newConfigRun() {
+    vscode.window.showInputBox({prompt: "Run command. Example: \"./your-executable-file\"", ignoreFocusOut: true})
+        .then(val => { new_run_command = val; writeConfig(); });
+}
+
+function writeConfig() {
+    console.log('Creating new config: ', configPath);
+    if(!fs.existsSync(vscode.workspace.rootPath + '/.vscode')) {
+        fs.mkdirSync(vscode.workspace.rootPath + '/.vscode');
+    }
+
+    let newConfig = {}
+    newConfig.commands = {}
+    newConfig.commands.build = new_build_command;
+    newConfig.commands.run = new_run_command;
+
+    fs.writeFileSync(configPath, JSON.stringify(newConfig));
+    readConfig();
+    vscode.window.showInformationMessage('Bar done! Saved settings to ' + configPath);
+}
+
+function readConfig() {
+    if(fs.existsSync(configPath)) {
+        config = JSON.parse(fs.readFileSync(configPath, 'utf8'))
+        addStatusBar();
+    } else {
+        newConfigBuild();
+    }
+}
 
 function init() {
-    statusBarItem_sep_1.text = "|";
-    statusBarItem_sep_1.show();
-
-    statusBarItem_build.text = "Build";
-    statusBarItem_build.command = "extension.build";
-    statusBarItem_build.show();
-
-    statusBarItem_run.text = "► Run";
-    statusBarItem_run.command = "extension.run";
-    statusBarItem_run.show();
-
-    statusBarItem_bar.text = "Build and run";
-    statusBarItem_bar.command = "extension.bar";
-    statusBarItem_bar.show();
-
-    statusBarItem_sep_2.text = "|";
-    statusBarItem_sep_2.show();
-
+    console.log('bar is active!');
+    readConfig();
 }
 
 function build() {
-    vscode.window.showInformationMessage('Building project...');
-    let ls = exec(commands.build, {cwd: vscode.workspace.rootPath, maxBuffer: 2048000});
+    //vscode.window.showInformationMessage('Building project...');
+    let ls = exec(config.commands.build, {cwd: vscode.workspace.rootPath, maxBuffer: 2048000});
 
     ls.on('close', (code) => {
         //console.log(`child process exited with code ${code}`);
@@ -61,13 +97,11 @@ function build() {
 
 function run() {
     vscode.window.showInformationMessage('Running project...');
-    exec(commands.run, {cwd: vscode.workspace.rootPath, maxBuffer: 2048000});
+    exec(config.commands.run, {cwd: vscode.workspace.rootPath, maxBuffer: 2048000});
 }
 
 // this method is called when your extension is executed
 function activate(context) {
-
-    console.log('bar is active!');
 
     // Init
     let disposable = vscode.commands.registerCommand('extension.init', () => {
