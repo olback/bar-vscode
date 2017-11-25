@@ -15,10 +15,6 @@ let new_run_command;
 const statusBarItems = [];
 const configPath = vscode.workspace.rootPath + "/.vscode/bar.conf.json";
 
-function fuck(str) {
-    return str;
-}
-
 function addStatusBarItem(str, cmd) {
     statusBarItems.push(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left));
     statusBarItems[statusBarItems.length-1].text = str;
@@ -55,7 +51,7 @@ function writeConfig() {
     newConfig.commands.build = new_build_command;
     newConfig.commands.run = new_run_command;
 
-    fs.writeFileSync(configPath, JSON.stringify(newConfig));
+    fs.writeFileSync(configPath, JSON.stringify(newConfig, null, 4));
     readConfig();
     vscode.window.showInformationMessage('Bar done! Saved settings to ' + configPath);
 }
@@ -134,6 +130,6 @@ exports.activate = activate;
 
 // this method is called when your extension is deactivated
 function deactivate() {
-    console.log('bar unloaded');
+    //console.log('bar unloaded');
 }
 exports.deactivate = deactivate;

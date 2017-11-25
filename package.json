@@ -4,6 +4,7 @@
     "description": "Click a button to compile/build and/or run a project",
     "version": "0.0.1",
     "publisher": "olback",
+    "icon": "images/bar_icon.png",
     "engines": {
         "vscode": "^1.18.0"
     },
@@ -20,19 +21,19 @@
     "contributes": {
         "commands": [{
             "command": "extension.init",
-            "title": "Car: Init"
+            "title": "Bar: Init"
         },
         {
             "command": "extension.run",
-            "title": "Car: Run project"
+            "title": "Bar: Run project"
         },
         {
             "command": "extension.build",
-            "title": "Car: Build project"
+            "title": "Bar: Build project"
         },
         {
             "command": "extension.bar",
-            "title": "Car: Build and run project"
+            "title": "Bar: Build and run project"
         }]
     },
     "scripts": {
