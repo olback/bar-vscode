@@ -2,7 +2,7 @@
 
 ## Features
 The goal with this extension is to make it easier to develop binary files. In the status bar you have the option to Build, Run and "Build and run" the project.  
-![staus bar buttons](images/status_bar.png)  
+![staus bar buttons](https://raw.githubusercontent.com/olback/bar-vscode/master/images/status_bar.png)  
 The commands for building/compiling and running your project are saved in `projectRoot/.vscode/bar.conf.json` and should look like this:
 ```
 {
