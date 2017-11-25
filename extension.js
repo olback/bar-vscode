@@ -1,38 +1,60 @@
 //import { Extension } from 'typescript';
 
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+const statusBarItem_build = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left)
+const statusBarItem_run = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left)
+const statusBarItem_bar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left)
+
+function init() {
+    statusBarItem_build.text = "Build";
+    statusBarItem_build.show();
+
+    statusBarItem_run.text = "Run";
+    statusBarItem_run.show();
+
+    statusBarItem_bar.text = "Build and run";
+    statusBarItem_bar.show();
+
+}
+
+function build() {
+    vscode.window.showInformationMessage('Building project...');
+}
+
+function run() {
+    vscode.window.showInformationMessage('Running project...');
+}
+
+// this method is called when your extension is executed
 function activate(context) {
 
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
     console.log('car is now active!');
+    //console.log("VS Code : ",vscode.window);
 
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with  registerCommand
-    // The commandId parameter must match the command field in package.json
+    // Init
+    let disposable = vscode.commands.registerCommand('extension.init', () => {
+        init();
+    });
+    context.subscriptions.push(disposable);
 
     // Build
-    let disposable = vscode.commands.registerCommand('extension.build', () => {
-        // The code you place here will be executed every time your command is executed
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Building whatever');
+    disposable = vscode.commands.registerCommand('extension.build', () => {
+        build();
     });
     context.subscriptions.push(disposable);
 
     // Run
     disposable = vscode.commands.registerCommand('extension.run', () => {
-        vscode.window.showInformationMessage('Started whatever');
+        run();
     });
     context.subscriptions.push(disposable);
 
     // Build and run
     disposable = vscode.commands.registerCommand('extension.bar', () => {
-        vscode.window.showInformationMessage('Started and run whatever');
+        //vscode.window.showInformationMessage('Started and run whatever');
+        build();
+        run();
     });
     context.subscriptions.push(disposable);
 
