@@ -12,11 +12,8 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.init",
-        "onCommand:extension.build",
-        "onCommand:extension.run",
-        "onCommand:extension.bar",
-        "onCommand:extension.reset"
+        "workspaceContains:**/.vscode/bar.conf.json",
+        "onCommand:extension.init"
     ],
     "main": "./extension",
     "contributes": {

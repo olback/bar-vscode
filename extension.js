@@ -9,6 +9,9 @@ const exec = require('child_process').exec;
 const fs = require('fs');
 
 let config;
+let initialized = 0;
+let statusbar = 0;
+let resetConfig_val = 0;
 let runAfterBuild = false;
 let new_build_command;
 let new_run_command;
@@ -32,8 +35,18 @@ function addStatusBar() {
 }
 
 function newConfigBuild() {
-    vscode.window.showInputBox({prompt: 'Build command. Example: "make build"', ignoreFocusOut: true})
+    if(resetConfig_val == 0) {
+        vscode.window.showInformationMessage('Add Bar config?', 'Yes')
+            .then(selection => {
+            if(selection == "Yes") {
+                vscode.window.showInputBox({prompt: 'Build command. Example: "make build"', ignoreFocusOut: true})
+                .then(val => { new_build_command = val; newConfigRun(); });
+            }
+        });
+    } else {
+        vscode.window.showInputBox({prompt: 'Build command. Example: "make build"', ignoreFocusOut: true})
         .then(val => { new_build_command = val; newConfigRun(); });
+    }
 }
 
 function newConfigRun() {
@@ -60,25 +73,36 @@ function writeConfig() {
 function readConfig() {
     if(fs.existsSync(configPath)) {
         config = JSON.parse(fs.readFileSync(configPath, 'utf8'))
-        addStatusBar();
+        if(statusbar == 0) {
+            addStatusBar();
+            statusbar = 1;
+        }
     } else {
         newConfigBuild();
     }
 }
 
 function resetConfig() {
-    if(fs.existsSync(configPath)) {
-        fs.unlinkSync(configPath, (err) => {
-            if(err) return console.log(err);
-            console.log("Removed " + configPath);
-        });
-        vscode.window.showWarningMessage('Bar config reset.');
-        init();
+    vscode.window.showWarningMessage('Reset Bar config?', 'Yes').then(selection => {
+      if(selection == "Yes") {
+        if(fs.existsSync(configPath)) {
+            fs.unlinkSync(configPath, (err) => {
+                if(err) return console.log(err);
+                console.log("Removed " + configPath);
+            });
+            initialized = 0;
+            resetConfig_val = 1;
+            init();
+        }
     }
+    });
 }
 
 function init() {
-    readConfig();
+    if(initialized == 0) {
+        readConfig();
+    }
+    initialized = 1;
 }
 
 function build() {
@@ -146,6 +170,8 @@ function activate(context) {
         resetConfig();
     });
     context.subscriptions.push(disposable);
+
+    init();
 
 }
 exports.activate = activate;
