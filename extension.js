@@ -28,9 +28,9 @@ function addStatusBarItem(str, cmd) {
 
 function addStatusBar() {
     addStatusBarItem("|");
-    addStatusBarItem("Build", "extension.build");
-    addStatusBarItem("► Run", "extension.run");
-    addStatusBarItem("Build and run", "extension.bar");
+    addStatusBarItem("Build", "bar.build");
+    addStatusBarItem("► Run", "bar.run");
+    addStatusBarItem("Build and run", "bar.bar");
     addStatusBarItem("|");
 }
 
@@ -140,25 +140,25 @@ function activate(context) {
     console.log('bar is active!');
 
     // Init
-    let disposable = vscode.commands.registerCommand('extension.init', () => {
+    let disposable = vscode.commands.registerCommand('bar.init', () => {
         init();
     });
     context.subscriptions.push(disposable);
 
     // Build
-    disposable = vscode.commands.registerCommand('extension.build', () => {
+    disposable = vscode.commands.registerCommand('bar.build', () => {
         build();
     });
     context.subscriptions.push(disposable);
 
     // Run
-    disposable = vscode.commands.registerCommand('extension.run', () => {
+    disposable = vscode.commands.registerCommand('bar.run', () => {
         run();
     });
     context.subscriptions.push(disposable);
 
     // Build and run
-    disposable = vscode.commands.registerCommand('extension.bar', () => {
+    disposable = vscode.commands.registerCommand('bar.bar', () => {
         //vscode.window.showInformationMessage('Started and run whatever');
         runAfterBuild = true;
         build();
@@ -166,7 +166,7 @@ function activate(context) {
     context.subscriptions.push(disposable);
 
     // Reset config
-    disposable = vscode.commands.registerCommand('extension.reset', () => {
+    disposable = vscode.commands.registerCommand('bar.reset', () => {
         resetConfig();
     });
     context.subscriptions.push(disposable);

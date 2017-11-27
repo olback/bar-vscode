@@ -5,45 +5,54 @@
     "version": "0.0.3",
     "publisher": "olback",
     "icon": "images/bar_icon.png",
-    "engines": {
-        "vscode": "^1.18.0"
+    "galleryBanner": {
+		"color": "#333",
+		"theme": "dark"
+	},
+    "license": "MIT",
+    "homepage": "https://github.com/olback/bar-vscode/blob/master/README.md",
+    "bugs": "https://github.com/olback/bar-vscode/issues",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/olback/bar-vscode.git"
     },
+    "author": {
+		"name": "oback",
+		"email": "bar-vscode@olback.net"
+	},
     "categories": [
         "Other"
     ],
+    "engines": {
+        "vscode": "^1.18.0"
+    },
     "activationEvents": [
         "workspaceContains:**/.vscode/bar.conf.json",
-        "onCommand:extension.init"
+        "onCommand:bar.init"
     ],
     "main": "./extension",
     "contributes": {
         "commands": [{
-            "command": "extension.init",
+            "command": "bar.init",
             "title": "Bar: Init"
         },
         {
-            "command": "extension.run",
+            "command": "bar.run",
             "title": "Bar: Run project"
         },
         {
-            "command": "extension.build",
+            "command": "bar.build",
             "title": "Bar: Build project"
         },
         {
-            "command": "extension.bar",
+            "command": "bar.bar",
             "title": "Bar: Build and run project"
         },
         {
-            "command": "extension.reset",
+            "command": "bar.reset",
             "title": "Bar: Reset config"
         }]
     },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/olback/bar-vscode"
-    },
-    "homepage": "https://github.com/olback/bar-vscode/blob/master/README.md",
-    "bugs": "https://github.com/olback/bar-vscode/issues",
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "node ./node_modules/vscode/bin/test"

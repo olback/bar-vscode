@@ -6,6 +6,8 @@
 * Autoload the extension if `.vscode/bar.conf.json` exists.
 * Can't initialize the extension more than once. (bug fix)
 * Minor improvements.
+* Added MIT License.
+* Added more info in `package.json`.
 * Added more bugs.
 
 ### 0.0.2
