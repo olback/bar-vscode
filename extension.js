@@ -14,6 +14,7 @@ let new_build_command;
 let new_run_command;
 const statusBarItems = [];
 const configPath = vscode.workspace.rootPath + "/.vscode/bar.conf.json";
+let output = vscode.window.createOutputChannel('Bar');
 
 function addStatusBarItem(str, cmd) {
     statusBarItems.push(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left));
@@ -88,16 +89,19 @@ function build() {
         //console.log(`child process exited with code ${code}`);
         if(code == 0) {
             vscode.window.showInformationMessage('Build complete.');
+            //output.hide(vscode.ViewColumn.Two);
             if(runAfterBuild) {
                 runAfterBuild = false; // reset 
                 run(); // run
             }
         } else {
-            vscode.window.showErrorMessage('Build failed.');
-            ls.stderr.on('data', (data) => {
-                console.log(`stderr: ${data}`);
-            });
+            vscode.window.showErrorMessage('Build failed. Check Bar Output.');
         }
+    });
+    ls.stderr.on('data', (data) => {
+        //console.log(`stderr: ${data}`);
+        output.show(vscode.ViewColumn.Two);
+        output.appendLine(data);
     });
 }
 
