@@ -38,18 +38,18 @@ function newConfigBuild() {
         vscode.window.showInformationMessage('Add Bar config?', 'Yes')
             .then(selection => {
             if(selection == "Yes") {
-                vscode.window.showInputBox({prompt: 'Build command. Example: "make build"', ignoreFocusOut: true})
+                vscode.window.showInputBox({prompt: 'Command to build the project. Example: "make build"', ignoreFocusOut: true})
                 .then(val => { new_build_command = val; newConfigRun(); });
             }
         });
     } else {
-        vscode.window.showInputBox({prompt: 'Build command. Example: "make build"', ignoreFocusOut: true})
+        vscode.window.showInputBox({prompt: 'Command to build the project. Example: "make build"', ignoreFocusOut: true})
         .then(val => { new_build_command = val; newConfigRun(); });
     }
 }
 
 function newConfigRun() {
-    vscode.window.showInputBox({prompt: "Run command. Example: \"./your-executable-file\"", ignoreFocusOut: true})
+    vscode.window.showInputBox({prompt: "Command to run your project. Example: \"./your-executable-file\"", ignoreFocusOut: true})
         .then(val => { new_run_command = val; writeConfig(); });
 }
 
