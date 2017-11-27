@@ -18,18 +18,20 @@ const statusBarItems = [];
 const configPath = vscode.workspace.rootPath + "/.vscode/bar.conf.json";
 const output = vscode.window.createOutputChannel('Bar');
 
-function addStatusBarItem(str, cmd) {
+function addStatusBarItem(str, cmd, tip, col) { // (name, command, tooltip, color)
     statusBarItems.push(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left));
     statusBarItems[statusBarItems.length-1].text = str;
-    if(cmd) { statusBarItems[statusBarItems.length-1].command = cmd; }
+    if(cmd) statusBarItems[statusBarItems.length-1].command = cmd;
+    if(tip) statusBarItems[statusBarItems.length-1].tooltip = tip;
+    if(col) statusBarItems[statusBarItems.length-1].color = col;
     statusBarItems[statusBarItems.length-1].show();
 }
 
 function addStatusBar() {
     addStatusBarItem("|");
-    addStatusBarItem("Build", "bar.build");
-    addStatusBarItem("► Run", "bar.run");
-    addStatusBarItem("Build and run", "bar.bar");
+    addStatusBarItem("Build", "bar.build", "Build project");
+    addStatusBarItem("► Run", "bar.run", "Run project/file");
+    addStatusBarItem("Build and run", "bar.bar", "Build and run project/file");
     addStatusBarItem("|");
 }
 
