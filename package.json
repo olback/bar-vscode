@@ -2,7 +2,7 @@
     "name": "bar",
     "displayName": "Build and run",
     "description": "Click a button to compile/build and/or run a project",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "publisher": "olback",
     "icon": "images/bar_icon.png",
     "galleryBanner": {
@@ -17,11 +17,18 @@
         "url": "https://github.com/olback/bar-vscode.git"
     },
     "author": {
-		"name": "oback",
+		"name": "olback",
 		"email": "bar-vscode@olback.net"
 	},
     "categories": [
         "Other"
+    ],
+    "keywords": [
+        "IDE",
+        "vscode",
+        "buttons",
+        "build",
+        "run"
     ],
     "engines": {
         "vscode": "^1.18.0"
@@ -51,7 +58,25 @@
         {
             "command": "bar.reset",
             "title": "Bar: Reset config"
-        }]
+        },
+        {
+            "command": "bar.config",
+            "title": "Bar: Edit config"
+        }],
+        "keybindings":[
+            {
+                "command": "bar.bar",
+                "key": "shift+f6"
+            },
+            {
+                "command": "bar.build",
+                "key": "ctrl+shift+f6"
+            },
+            {
+                "command": "bar.run",
+                "key": "ctrl+shift+f2"
+            }
+        ]
     },
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",

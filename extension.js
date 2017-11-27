@@ -9,7 +9,6 @@ const exec = require('child_process').exec;
 const fs = require('fs');
 
 let config;
-let initialized = 0;
 let statusbar = 0;
 let resetConfig_val = 0;
 let runAfterBuild = false;
@@ -17,7 +16,7 @@ let new_build_command;
 let new_run_command;
 const statusBarItems = [];
 const configPath = vscode.workspace.rootPath + "/.vscode/bar.conf.json";
-let output = vscode.window.createOutputChannel('Bar');
+const output = vscode.window.createOutputChannel('Bar');
 
 function addStatusBarItem(str, cmd) {
     statusBarItems.push(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left));
@@ -90,7 +89,6 @@ function resetConfig() {
                 if(err) return console.log(err);
                 console.log("Removed " + configPath);
             });
-            initialized = 0;
             resetConfig_val = 1;
             init();
         }
@@ -99,10 +97,7 @@ function resetConfig() {
 }
 
 function init() {
-    if(initialized == 0) {
-        readConfig();
-    }
-    initialized = 1;
+    readConfig();
 }
 
 function build() {
@@ -132,6 +127,13 @@ function build() {
 function run() {
     vscode.window.showInformationMessage('Running project...');
     exec(config.commands.run, {cwd: vscode.workspace.rootPath, maxBuffer: 2048000});
+}
+
+function editConfig() {
+    let openPath = vscode.Uri.file(configPath);
+    vscode.workspace.openTextDocument(openPath).then(doc => {
+      vscode.window.showTextDocument(doc);
+    });
 }
 
 // this method is called when your extension is executed
@@ -168,6 +170,12 @@ function activate(context) {
     // Reset config
     disposable = vscode.commands.registerCommand('bar.reset', () => {
         resetConfig();
+    });
+    context.subscriptions.push(disposable);
+
+    // Edit config
+    disposable = vscode.commands.registerCommand('bar.config', () => {
+        editConfig();
     });
     context.subscriptions.push(disposable);
 

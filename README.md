@@ -19,6 +19,12 @@ The commands for building/compiling and running your project are saved in `proje
 * `Bar: Run`: Run your project.
 * `Bar: Build and run project`: Build and run project.
 * `Bar: Reset` Reset the config file.
+* `Bar: Edit config` Open the config file.
+
+## Extension Keybindings
+* Build and run: `shift+f6`
+* Build: `ctrl+shift+f6`
+* Run: `shift+f2`
 
 ## Bugs
 Please report any bugs or issues on [GitHub](https://github.com/olback/bar-vscode)
