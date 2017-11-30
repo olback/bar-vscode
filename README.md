@@ -15,6 +15,7 @@ The commands for building/compiling and running your project are saved in `proje
 
 ## Extension Commands
 * `Bar: Init`: Initialize the extension.
+* `Bar: Reload`: Alias for `Bar: Init`.
 * `Bar: Build`: Build your project.
 * `Bar: Run`: Run your project.
 * `Bar: Build and run project`: Build and run project.

@@ -2,7 +2,7 @@
     "name": "bar",
     "displayName": "Build and run",
     "description": "Click a button to compile/build and/or run a project",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "publisher": "olback",
     "icon": "images/bar_icon.png",
     "galleryBanner": {
@@ -58,6 +58,10 @@
         {
             "command": "bar.reset",
             "title": "Bar: Reset config"
+        },
+        {
+            "command": "bar.reload",
+            "title": "Bar: Reload config"
         },
         {
             "command": "bar.config",

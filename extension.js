@@ -15,8 +15,9 @@ let runAfterBuild = false;
 let new_build_command;
 let new_run_command;
 const statusBarItems = [];
-const configPath = vscode.workspace.rootPath + "/.vscode/bar.conf.json";
+const configPath = vscode.workspace.rootPath + '/.vscode/bar.conf.json';
 const output = vscode.window.createOutputChannel('Bar');
+const terminal = vscode.window.createTerminal('Bar');
 
 function addStatusBarItem(str, cmd, tip, col) { // (name, command, tooltip, color)
     statusBarItems.push(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left));
@@ -121,14 +122,16 @@ function build() {
     });
     ls.stderr.on('data', (data) => {
         //console.log(`stderr: ${data}`);
-        output.show(vscode.ViewColumn.Two);
+        output.show();
         output.appendLine(data);
     });
 }
 
 function run() {
     vscode.window.showInformationMessage('Running project...');
-    exec(config.commands.run, {cwd: vscode.workspace.rootPath, maxBuffer: 2048000});
+    //exec(config.commands.run, {cwd: vscode.workspace.rootPath, maxBuffer: 2048000});
+    terminal.show();
+    terminal.sendText(config.commands.run);
 }
 
 function editConfig() {
@@ -145,6 +148,12 @@ function activate(context) {
 
     // Init
     let disposable = vscode.commands.registerCommand('bar.init', () => {
+        init();
+    });
+    context.subscriptions.push(disposable);
+
+    // Reload alias for bar.init
+    disposable = vscode.commands.registerCommand('bar.reload', () => {
         init();
     });
     context.subscriptions.push(disposable);
