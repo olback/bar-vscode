@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.6
+* Fixed 'Add new config?' bug.
+
 ## 0.0.5
 * Run commands are now run from the integrated terminal. Output will also be shown here.
 * Added `Bar: Reload`. Alias for `Bar: Init`.

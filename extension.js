@@ -190,7 +190,13 @@ function activate(context) {
     });
     context.subscriptions.push(disposable);
 
-    init();
+    if(fs.existsSync(configPath)) {
+        config = JSON.parse(fs.readFileSync(configPath, 'utf8'))
+        if(statusbar == 0) {
+            addStatusBar();
+            statusbar = 1;
+        }
+    }
 
 }
 exports.activate = activate;
