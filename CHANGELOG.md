@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.0.7
+* Cleaned up some of the code.
+* Added icons to the status bar items.
+* 'Build and run' is now shortend to 'Bar'.
+
 ## 0.0.6
 * Fixed 'Add new config?' bug.
 

@@ -30,9 +30,9 @@ function addStatusBarItem(str, cmd, tip, col) { // (name, command, tooltip, colo
 
 function addStatusBar() {
     addStatusBarItem("|");
-    addStatusBarItem("Build", "bar.build", "Build project");
-    addStatusBarItem("► Run", "bar.run", "Run project/file");
-    addStatusBarItem("Build and run", "bar.bar", "Build and run project/file");
+    addStatusBarItem("$(package)  Build", "bar.build", "Build project");
+    addStatusBarItem("$(terminal)  Run", "bar.run", "Run project/file");
+    addStatusBarItem("$(rocket)  Bar", "bar.bar", "Build and run project/file");
     addStatusBarItem("|");
 }
 
@@ -146,49 +146,22 @@ function activate(context) {
 
     console.log('bar is active!');
 
-    // Init
-    let disposable = vscode.commands.registerCommand('bar.init', () => {
-        init();
-    });
-    context.subscriptions.push(disposable);
-
-    // Reload alias for bar.init
-    disposable = vscode.commands.registerCommand('bar.reload', () => {
-        init();
-    });
-    context.subscriptions.push(disposable);
-
-    // Build
-    disposable = vscode.commands.registerCommand('bar.build', () => {
-        build();
-    });
-    context.subscriptions.push(disposable);
-
-    // Run
-    disposable = vscode.commands.registerCommand('bar.run', () => {
-        run();
-    });
-    context.subscriptions.push(disposable);
-
     // Build and run
-    disposable = vscode.commands.registerCommand('bar.bar', () => {
+    let disposable = vscode.commands.registerCommand('bar.bar', () => {
         //vscode.window.showInformationMessage('Started and run whatever');
         runAfterBuild = true;
         build();
     });
     context.subscriptions.push(disposable);
 
-    // Reset config
-    disposable = vscode.commands.registerCommand('bar.reset', () => {
-        resetConfig();
-    });
-    context.subscriptions.push(disposable);
-
-    // Edit config
-    disposable = vscode.commands.registerCommand('bar.config', () => {
-        editConfig();
-    });
-    context.subscriptions.push(disposable);
+    context.subscriptions.push(
+        vscode.commands.registerCommand('bar.init', init),
+        vscode.commands.registerCommand('bar.reload', init),
+        vscode.commands.registerCommand('bar.build', build),
+        vscode.commands.registerCommand('bar.run', run),
+        vscode.commands.registerCommand('bar.reset', resetConfig),
+        vscode.commands.registerCommand('bar.config', editConfig)
+    );
 
     if(fs.existsSync(configPath)) {
         config = JSON.parse(fs.readFileSync(configPath, 'utf8'))
@@ -199,10 +172,11 @@ function activate(context) {
     }
 
 }
-exports.activate = activate;
 
 // this method is called when your extension is deactivated
 function deactivate() {
     //console.log('bar unloaded');
 }
+
+exports.activate = activate;
 exports.deactivate = deactivate;
