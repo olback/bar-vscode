@@ -104,14 +104,13 @@ function init() {
 }
 
 function build() {
-    //vscode.window.showInformationMessage('Building project...');
+    output.clear();
     let ls = exec(config.commands.build, {cwd: vscode.workspace.rootPath, maxBuffer: 2048000});
 
     ls.on('close', (code) => {
         //console.log(`child process exited with code ${code}`);
         if(code == 0) {
             vscode.window.showInformationMessage('Build complete.');
-            //output.hide(vscode.ViewColumn.Two);
             if(runAfterBuild) {
                 runAfterBuild = false; // reset 
                 run(); // run

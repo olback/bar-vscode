@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.8
+* Clear output before running the build command.
+
 ## 0.0.7
 * Cleaned up some of the code.
 * Added icons to the status bar items.
