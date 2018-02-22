@@ -1,5 +1,7 @@
 # Bar - VS Code
 
+![Downloads](https://img.shields.io/vscode-marketplace/d/olback.bar.svg)
+
 ## Features
 The goal with this extension is to make it easier to develop binary files. In the status bar you have the option to Build, Run and "Build and run" the project.  
 ![staus bar buttons](https://raw.githubusercontent.com/olback/bar-vscode/master/images/status_bar.png)  
