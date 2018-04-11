@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.9
+* Send CTRL-C to terminal before sending command. Thanks @agurz
+
 ## 0.0.8
 * Clear output before running the build command.
 
