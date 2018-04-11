@@ -130,6 +130,7 @@ function run() {
     vscode.window.showInformationMessage('Running project...');
     //exec(config.commands.run, {cwd: vscode.workspace.rootPath, maxBuffer: 2048000});
     terminal.show();
+    terminal.sendText('\003'); // https://stackoverflow.com/questions/5774689/what-is-003-special-for
     terminal.sendText(config.commands.run);
 }
 
