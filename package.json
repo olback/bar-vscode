@@ -2,7 +2,7 @@
     "name": "bar",
     "displayName": "Build and run",
     "description": "Click a button to compile/build and/or run a project",
-    "version": "0.0.9",
+    "version": "0.1.0",
     "publisher": "olback",
     "icon": "images/bar_icon.png",
     "galleryBanner": {

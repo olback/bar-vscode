@@ -6,6 +6,7 @@
 // Imports
 const vscode = require('vscode');
 const exec = require('child_process').exec;
+const path = require('path');
 const fs = require('fs');
 
 let config;
@@ -15,7 +16,7 @@ let runAfterBuild = false;
 let new_build_command;
 let new_run_command;
 const statusBarItems = [];
-const configPath = vscode.workspace.rootPath + '/.vscode/bar.conf.json';
+const configPath = path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, '.vscode', 'bar.conf.json');
 const output = vscode.window.createOutputChannel('Bar');
 const terminal = vscode.window.createTerminal('Bar');
 
@@ -58,8 +59,8 @@ function newConfigRun() {
 
 function writeConfig() {
     console.log('Creating new config: ', configPath);
-    if(!fs.existsSync(vscode.workspace.rootPath + '/.vscode')) {
-        fs.mkdirSync(vscode.workspace.rootPath + '/.vscode');
+    if (fs.existsSync(path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, '.vscode'))) {
+        fs.mkdirSync(path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, '.vscode'))
     }
 
     let newConfig = {}
@@ -105,7 +106,7 @@ function init() {
 
 function build() {
     output.clear();
-    let ls = exec(config.commands.build, {cwd: vscode.workspace.rootPath, maxBuffer: 2048000});
+    let ls = exec(config.commands.build, {cwd: vscode.workspace.workspaceFolders[0].uri.fsPath, maxBuffer: 2048000});
 
     ls.on('close', (code) => {
         //console.log(`child process exited with code ${code}`);
@@ -128,7 +129,7 @@ function build() {
 
 function run() {
     vscode.window.showInformationMessage('Running project...');
-    //exec(config.commands.run, {cwd: vscode.workspace.rootPath, maxBuffer: 2048000});
+    //exec(config.commands.run, {cwd: vscode.workspace.workFolders[0].uri.fsPath, maxBuffer: 2048000});
     terminal.show();
     terminal.sendText('\003'); // https://stackoverflow.com/questions/5774689/what-is-003-special-for
     terminal.sendText(config.commands.run);

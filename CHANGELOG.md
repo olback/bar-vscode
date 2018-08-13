@@ -1,7 +1,10 @@
 # Change Log
 
+## 0.1.0
+* Use `vscode.workspace.worspaceFolders[0].uri.fsPath` instead of `vscode.workspace.rootPath`.
+
 ## 0.0.9
-* Send CTRL-C to terminal before sending command. Thanks @agurz
+* Send CTRL-C to terminal before sending command. Thanks @agurz.
 
 ## 0.0.8
 * Clear output before running the build command.
