@@ -88,7 +88,7 @@ export function activate(context: vscode.ExtensionContext): void {
             terminal.sendText(config.commands.build);
         }),
         vscode.commands.registerCommand(`${ex}.run`, () => {
-            output.appendLine(`[Info] Building with command ${config.commands.run}`);
+            output.appendLine(`[Info] Running with command ${config.commands.run}`);
             terminal.show();
             terminal.sendText('\x03');
             terminal.sendText(config.commands.run);
