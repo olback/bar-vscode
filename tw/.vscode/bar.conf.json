@@ -1,0 +1,6 @@
+{
+    "commands": {
+        "build": "echo \"build command\"",
+        "run": "echo 'run command'"
+    }
+}
