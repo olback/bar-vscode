@@ -59,7 +59,7 @@ function newConfigRun() {
 
 function writeConfig() {
     console.log('Creating new config: ', configPath);
-    if (fs.existsSync(path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, '.vscode'))) {
+    if (!fs.existsSync(path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, '.vscode'))) {
         fs.mkdirSync(path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, '.vscode'))
     }
 

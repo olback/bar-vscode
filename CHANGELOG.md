@@ -1,5 +1,8 @@
 # Change Log
 
+# 0.1.1
+* Fixed config-write bug
+
 ## 0.1.0
 * Use `vscode.workspace.worspaceFolders[0].uri.fsPath` instead of `vscode.workspace.rootPath`.
 
