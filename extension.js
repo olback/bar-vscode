@@ -18,6 +18,7 @@ const DEFAULT_CONFIG = {
         building: true,
         buildSuccess: true,
         buildError: true,
+        buildErrorMessageBox: true,
         run: true
     }
 };
@@ -46,7 +47,7 @@ function addStatusBarItem(key, name, cmd, tip, col) { // (key, name, command, to
 }
 
 let statusMessageTimeout;
-function showStatusMessage(str, duration = null) {
+function showStatusMessage(str, duration = STATUS_MESSAGE_DURATION) {
     clearTimeout(statusMessageTimeout);
     statusBarItems.statusMessage.text = str;
     statusBarItems.statusMessage.show();
@@ -103,7 +104,8 @@ function writeConfig() {
 
 function readConfig() {
     if(fs.existsSync(configPath)) {
-        config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        const userConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        config = Object.assign({}, DEFAULT_CONFIG, userConfig);
         if(statusbar == 0) {
             addStatusBar();
             statusbar = 1;
@@ -136,7 +138,7 @@ function build() {
     return new Promise((resolve) => {
         output.clear();
         if(config.messages.building) {
-            showStatusMessage('Building...');
+            showStatusMessage('Building...', 0);
         }
 
         let ls = exec(config.commands.build, {
@@ -146,15 +148,18 @@ function build() {
 
         ls.on('close', (code) => {
             //console.log(`child process exited with code ${code}`);
+            statusBarItems.statusMessage.hide();
             if(code == 0) {
                 resolve();
-                statusBarItems.statusMessage.hide();
                 if(config.messages.buildSuccess) {
-                    showStatusMessage('Build Successful', STATUS_MESSAGE_DURATION);
+                    showStatusMessage('Build Successful');
                 }
             } else {
                 if(config.messages.buildError) {
-                    vscode.window.showErrorMessage('Build failed. Check Bar Output.');
+                    showStatusMessage('Build Failed');
+                }
+                if(config.messages.buildErrorMessageBox) {
+                    vscode.window.showErrorMessage('Build Failed. Check Bar Output.');
                 }
             }
         });
@@ -169,7 +174,7 @@ function build() {
 
 function run() {
     if(config.messages.run) {
-        showStatusMessage('Running', STATUS_MESSAGE_DURATION);
+        showStatusMessage('Running');
     }
     //exec(config.commands.run, {cwd: vscode.workspace.workFolders[0].uri.fsPath, maxBuffer: 2048000});
     terminal.show();
@@ -204,13 +209,7 @@ function activate(context) {
         vscode.commands.registerCommand('bar.config', editConfig)
     );
 
-    if(fs.existsSync(configPath)) {
-        config = JSON.parse(fs.readFileSync(configPath, 'utf8'))
-        if(statusbar == 0) {
-            addStatusBar();
-            statusbar = 1;
-        }
-    }
+    readConfig();
 
 }
 
