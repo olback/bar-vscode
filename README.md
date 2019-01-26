@@ -3,17 +3,9 @@
 ![Downloads](https://img.shields.io/vscode-marketplace/d/olback.bar.svg)
 
 ## Features
-The goal with this extension is to make it easier to develop binary files. In the status bar you have the option to Build, Run and "Build and run" the project.  
-![staus bar buttons](https://raw.githubusercontent.com/olback/bar-vscode/master/images/status_bar.png)  
-The commands for building/compiling and running your project are saved in `projectRoot/.vscode/bar.conf.json` and should look like this:
-```
-{
-    "commands":{
-        "build":"your-build-command",
-        "run":"./project-exe"
-    }
-}
-```
+The goal with this extension is to make it easier to develop binary files. In the status bar you have the option to Build, Run and "Build and run" the project.
+
+![status bar buttons](https://raw.githubusercontent.com/olback/bar-vscode/master/images/status_bar.png)  
 
 ## Extension Commands
 * `Bar: Init`: Initialize the extension.
@@ -28,6 +20,29 @@ The commands for building/compiling and running your project are saved in `proje
 * Build and run: `shift+f6`
 * Build: `ctrl+shift+f6`
 * Run: `shift+f2`
+
+## Configuration
+Open the command pallete (Cmd or Ctrl+Shift+P) and run `Bar: Init` to initialize Bar and create the config file.
+
+The commands for building/compiling and running your project are saved in `projectRoot/.vscode/bar.conf.json`.
+
+```
+{
+    "commands": {
+        "build": "your-build-command",
+        "run": "./project-exe"
+    },
+    "messages": {
+        "building": true,
+        "buildSuccess": true,
+        "buildError": true,            
+        "buildErrorMessageBox": true, 
+        "run": true
+    }
+}
+```
+
+The values in the "messages" object allow you to control the kinds of status messages that will be shown. When `buildErrorMessageBox` is true, a small informational error box will also appear in the bottom right corner when the build fails.
 
 ## Bugs
 Please report any bugs or issues on [GitHub](https://github.com/olback/bar-vscode)
