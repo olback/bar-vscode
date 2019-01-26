@@ -9,52 +9,81 @@ const exec = require('child_process').exec;
 const path = require('path');
 const fs = require('fs');
 
-let config;
+const DEFAULT_CONFIG = {
+    commands: {
+        build: "",
+        run: ""
+    },
+    messages: {
+        building: true,
+        buildSuccess: true,
+        buildError: true,
+        run: true
+    }
+};
+
+const STATUS_MESSAGE_DURATION = 2000;
+
+let config = DEFAULT_CONFIG;
 let statusbar = 0;
-let resetConfig_val = 0;
-let runAfterBuild = false;
-let new_build_command;
-let new_run_command;
-const statusBarItems = [];
+let resetConfigVal = 0;
+let newBuildCommand;
+let newRunCommand;
+const statusBarItems = {};
 const configPath = path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, '.vscode', 'bar.conf.json');
 const output = vscode.window.createOutputChannel('Bar');
 const terminal = vscode.window.createTerminal('Bar');
 
-function addStatusBarItem(str, cmd, tip, col) { // (name, command, tooltip, color)
-    statusBarItems.push(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left));
-    statusBarItems[statusBarItems.length-1].text = str;
-    if(cmd) statusBarItems[statusBarItems.length-1].command = cmd;
-    if(tip) statusBarItems[statusBarItems.length-1].tooltip = tip;
-    if(col) statusBarItems[statusBarItems.length-1].color = col;
-    statusBarItems[statusBarItems.length-1].show();
+function addStatusBarItem(key, name, cmd, tip, col) { // (key, name, command, tooltip, color)
+    const item = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+    if(name) item.text = name;
+    if(cmd) item.command = cmd;
+    if(tip) item.tooltip = tip;
+    if(col) item.color = col;
+    item.show();
+    statusBarItems[key] = item;
+    return item;
+}
+
+let statusMessageTimeout;
+function showStatusMessage(str, duration = null) {
+    clearTimeout(statusMessageTimeout);
+    statusBarItems.statusMessage.text = str;
+    statusBarItems.statusMessage.show();
+    if(duration) {
+        statusMessageTimeout = setTimeout(() => {
+            statusBarItems.statusMessage.hide();
+        }, duration);
+    }
 }
 
 function addStatusBar() {
-    addStatusBarItem("|");
-    addStatusBarItem("$(package)  Build", "bar.build", "Build project");
-    addStatusBarItem("$(terminal)  Run", "bar.run", "Run project/file");
-    addStatusBarItem("$(rocket)  Bar", "bar.bar", "Build and run project/file");
-    addStatusBarItem("|");
+    addStatusBarItem("divider1", "|");
+    addStatusBarItem("build", "$(package)  Build", "bar.build", "Build project");
+    addStatusBarItem("run", "$(terminal)  Run", "bar.run", "Run project/file");
+    addStatusBarItem("bar", "$(rocket)  Bar", "bar.bar", "Build and run project/file");
+    addStatusBarItem("divider2", "|");
+    addStatusBarItem("statusMessage");
 }
 
 function newConfigBuild() {
-    if(resetConfig_val == 0) {
+    if(resetConfigVal == 0) {
         vscode.window.showInformationMessage('Add Bar config?', 'Yes')
-            .then(selection => {
+        .then(selection => {
             if(selection == "Yes") {
                 vscode.window.showInputBox({prompt: 'Command to build the project. Example: "make build"', ignoreFocusOut: true})
-                .then(val => { new_build_command = val; newConfigRun(); });
+                .then(val => { newBuildCommand = val; newConfigRun(); });
             }
         });
     } else {
         vscode.window.showInputBox({prompt: 'Command to build the project. Example: "make build"', ignoreFocusOut: true})
-        .then(val => { new_build_command = val; newConfigRun(); });
+        .then(val => { newBuildCommand = val; newConfigRun(); });
     }
 }
 
 function newConfigRun() {
     vscode.window.showInputBox({prompt: "Command to run your project. Example: \"./your-executable-file\"", ignoreFocusOut: true})
-        .then(val => { new_run_command = val; writeConfig(); });
+        .then(val => { newRunCommand = val; writeConfig(); });
 }
 
 function writeConfig() {
@@ -63,10 +92,9 @@ function writeConfig() {
         fs.mkdirSync(path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, '.vscode'))
     }
 
-    let newConfig = {}
-    newConfig.commands = {}
-    newConfig.commands.build = new_build_command;
-    newConfig.commands.run = new_run_command;
+    const newConfig = { ...DEFAULT_CONFIG };
+    newConfig.commands.build = newBuildCommand;
+    newConfig.commands.run = newRunCommand;
 
     fs.writeFileSync(configPath, JSON.stringify(newConfig, null, 4));
     readConfig();
@@ -75,7 +103,7 @@ function writeConfig() {
 
 function readConfig() {
     if(fs.existsSync(configPath)) {
-        config = JSON.parse(fs.readFileSync(configPath, 'utf8'))
+        config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
         if(statusbar == 0) {
             addStatusBar();
             statusbar = 1;
@@ -93,7 +121,7 @@ function resetConfig() {
                 if(err) return console.log(err);
                 console.log("Removed " + configPath);
             });
-            resetConfig_val = 1;
+            resetConfigVal = 1;
             init();
         }
     }
@@ -105,33 +133,47 @@ function init() {
 }
 
 function build() {
-    output.clear();
-    let ls = exec(config.commands.build, {cwd: vscode.workspace.workspaceFolders[0].uri.fsPath, maxBuffer: 2048000});
-
-    ls.on('close', (code) => {
-        //console.log(`child process exited with code ${code}`);
-        if(code == 0) {
-            vscode.window.showInformationMessage('Build complete.');
-            if(runAfterBuild) {
-                runAfterBuild = false; // reset 
-                run(); // run
-            }
-        } else {
-            vscode.window.showErrorMessage('Build failed. Check Bar Output.');
+    return new Promise((resolve) => {
+        output.clear();
+        if(config.messages.building) {
+            showStatusMessage('Building...');
         }
-    });
-    ls.stderr.on('data', (data) => {
-        //console.log(`stderr: ${data}`);
-        output.show();
-        output.appendLine(data);
+
+        let ls = exec(config.commands.build, {
+            cwd: vscode.workspace.workspaceFolders[0].uri.fsPath, 
+            maxBuffer: 2048000
+        });
+
+        ls.on('close', (code) => {
+            //console.log(`child process exited with code ${code}`);
+            if(code == 0) {
+                resolve();
+                statusBarItems.statusMessage.hide();
+                if(config.messages.buildSuccess) {
+                    showStatusMessage('Build Successful', STATUS_MESSAGE_DURATION);
+                }
+            } else {
+                if(config.messages.buildError) {
+                    vscode.window.showErrorMessage('Build failed. Check Bar Output.');
+                }
+            }
+        });
+
+        ls.stderr.on('data', (data) => {
+            //console.log(`stderr: ${data}`);
+            output.show();
+            output.appendLine(data);
+        });
     });
 }
 
 function run() {
-    vscode.window.showInformationMessage('Running project...');
+    if(config.messages.run) {
+        showStatusMessage('Running', STATUS_MESSAGE_DURATION);
+    }
     //exec(config.commands.run, {cwd: vscode.workspace.workFolders[0].uri.fsPath, maxBuffer: 2048000});
     terminal.show();
-    terminal.sendText('\003'); // https://stackoverflow.com/questions/5774689/what-is-003-special-for
+    terminal.sendText('\003'); // Ctrl+C https://stackoverflow.com/questions/5774689/what-is-003-special-for
     terminal.sendText(config.commands.run);
 }
 
@@ -149,9 +191,7 @@ function activate(context) {
 
     // Build and run
     let disposable = vscode.commands.registerCommand('bar.bar', () => {
-        //vscode.window.showInformationMessage('Started and run whatever');
-        runAfterBuild = true;
-        build();
+        build().then(run);
     });
     context.subscriptions.push(disposable);
 
