@@ -1,6 +1,10 @@
 # Change Log
 
-# 0.1.1
+#  0.2.0
+* Thanks to @nathan815 for cleaning up my mess.
+* Added ability to disable messages.
+
+## 0.1.1
 * Fixed config-write bug
 
 ## 0.1.0
